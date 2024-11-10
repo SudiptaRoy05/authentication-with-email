@@ -3,6 +3,7 @@ import auth from "../../firebase.init";
 import {  useState } from "react";
 
 export default function Register() {
+    const [success, setSuccess] = useState(false)
     const [errorM, setErrorM] = useState('');
     
     const handleRegister=(e)=>{
@@ -11,15 +12,21 @@ export default function Register() {
         const password = e.target.password.value;
         // console.log(`${email} || ${password}`);
         setErrorM('');
+        setSuccess(false)
 
+        if(password.length < 6){
+            setErrorM('password should be 6 character');
+            return;
+        }
 
         createUserWithEmailAndPassword(auth, email, password)
         .then(result =>{
             const user = result.user;
-            console.log(user)
+            setSuccess(true);
         }).catch(error => {
             console.log("ERROR",error.message);
             setErrorM(error.message);
+            setSuccess(false);
         })
     }
   return (
@@ -65,6 +72,8 @@ export default function Register() {
         </form>
         {
             errorM && <p className="text-red-600">{errorM}</p>
+        }{
+            success && <p className="text-green-600">Successfuly create a user</p>
         }
       </div>
     </div>
