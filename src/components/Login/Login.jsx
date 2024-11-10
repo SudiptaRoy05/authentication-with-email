@@ -1,10 +1,14 @@
 export default function Login() {
+  const handleSignUp =(event)=>{
+    event.preventDefault();
+    console.log(event.target.email.value)
+  }
   return (
     <div>
       <h2 className="text-4xl text-center font-bold mt-12">Login</h2>
-      <div className="mt-10 space-y-7 max-w-lg mx-auto">
+      <div className="mt-10 max-w-lg mx-auto">
         
-        
+        <form onSubmit={handleSignUp} className="space-y-7">
         <label className="input input-bordered flex items-center gap-2 ">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +18,7 @@ export default function Login() {
           >
             <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
           </svg>
-          <input type="text" className="grow" placeholder="Username" />
+          <input type="email" name="email" className="grow" placeholder="Username" />
         </label>
         <label className="input input-bordered flex items-center gap-2">
           <svg
@@ -29,8 +33,12 @@ export default function Login() {
               clipRule="evenodd"
             />
           </svg>
-          <input type="password" className="grow" value="password" />
+          {/* <input type="password" className="grow" value="" /> */}
+          <input type="password"  name="" id="" />
         </label>
+        <button className="btn btn-success w-full">Login</button>
+        </form>
+        
       </div>
     </div>
   );
