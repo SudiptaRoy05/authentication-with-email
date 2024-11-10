@@ -1,4 +1,8 @@
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  updateProfile,
+} from "firebase/auth";
 import auth from "../../firebase.init";
 import { useState } from "react";
 import { FaRegEye } from "react-icons/fa";
@@ -8,14 +12,16 @@ export default function Register() {
   const [success, setSuccess] = useState(false);
   const [errorM, setErrorM] = useState("");
   const [showPass, setShowPass] = useState(false);
-  
 
   const handleRegister = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
+    const name = e.target.name.value;
+    const photo = e.target.photo.value;
+
     const terms = e.target.terms.checked;
-    // console.log(`${email} || ${password}`);
+    console.log(`${name} || ${photo}`);
     setErrorM("");
     setSuccess(false);
 
@@ -24,8 +30,8 @@ export default function Register() {
       return;
     }
 
-    const passRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
-     
+    const passRegex =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
 
     if (!passRegex.test(password)) {
       setErrorM(
@@ -34,9 +40,9 @@ export default function Register() {
       return;
     }
 
-    if(!terms){
-        setErrorM('Pleace accept our terms and conditions')
-        return;
+    if (!terms) {
+      setErrorM("Pleace accept our terms and conditions");
+      return;
     }
 
     createUserWithEmailAndPassword(auth, email, password)
@@ -45,10 +51,21 @@ export default function Register() {
         console.log(user);
         setSuccess(true);
 
-        sendEmailVerification(auth.currentUser)
+        const profile={
+            displayName:name,
+            photoUrl:photo,
+        }
+        updateProfile(auth.currentUser,profile)
         .then(()=>{
-            console.log('varification mail send')
+            console.log('profile updated')
         })
+        .catch((error) => {
+            console.log(error)
+        })
+
+        sendEmailVerification(auth.currentUser).then(() => {
+          console.log("varification mail send");
+        });
       })
       .catch((error) => {
         console.log("ERROR", error.message);
@@ -66,6 +83,18 @@ export default function Register() {
         <form onSubmit={handleRegister} className="card-body">
           <div className="form-control">
             <label className="label">
+              <span className="label-text">Name</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              placeholder="nameame"
+              className="input input-bordered"
+              required
+            />
+          </div>
+          <div className="form-control">
+            <label className="label">
               <span className="label-text">Email</span>
             </label>
             <input
@@ -76,6 +105,20 @@ export default function Register() {
               required
             />
           </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Photo Url</span>
+            </label>
+            <input
+              type="text"
+              name="photo"
+              placeholder="photo url"
+              className="input input-bordered"
+              required
+            />
+          </div>
+
           <div className="form-control relative">
             <label className="label">
               <span className="label-text">Password</span>
@@ -101,7 +144,11 @@ export default function Register() {
 
             <div className="form-control my-2">
               <label className="cursor-pointer flex justify-start items-center gap-4">
-                <input type="checkbox" name="terms" className="checkbox checkbox-success" />
+                <input
+                  type="checkbox"
+                  name="terms"
+                  className="checkbox checkbox-success"
+                />
                 <span className="label-text">
                   Accept our terms and conditions
                 </span>
@@ -119,7 +166,12 @@ export default function Register() {
         </form>
         {errorM && <p className="text-red-600">{errorM}</p>}
         {success && <p className="text-green-600">Successfuly create a user</p>}
-        <p>Allready have an account please: <Link to='/login' className="font-bold">login</Link></p>
+        <p>
+          Allready have an account please:{" "}
+          <Link to="/login" className="font-bold">
+            login
+          </Link>
+        </p>
       </div>
     </div>
   );
