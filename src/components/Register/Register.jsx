@@ -1,12 +1,16 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import auth from "../../firebase.init";
+import {  useState } from "react";
 
 export default function Register() {
+    const [errorM, setErrorM] = useState('');
+    
     const handleRegister=(e)=>{
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
         // console.log(`${email} || ${password}`);
+        setErrorM('');
 
 
         createUserWithEmailAndPassword(auth, email, password)
@@ -14,7 +18,8 @@ export default function Register() {
             const user = result.user;
             console.log(user)
         }).catch(error => {
-            console.log("ERROR",error);
+            console.log("ERROR",error.message);
+            setErrorM(error.message);
         })
     }
   return (
@@ -58,6 +63,9 @@ export default function Register() {
             <button className="btn btn-primary">Login</button>
           </div>
         </form>
+        {
+            errorM && <p className="text-red-600">{errorM}</p>
+        }
       </div>
     </div>
   );
