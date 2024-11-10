@@ -9,10 +9,10 @@ export default function Layout() {
         <Navbar></Navbar>
       </header>
       <main className="flex-grow">
-      <Outlet></Outlet>
+        <Outlet></Outlet>
       </main>
       <footer className="">
-      <Footer></Footer>
+        <Footer></Footer>
       </footer>
     </div>
   );
