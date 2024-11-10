@@ -1,45 +1,59 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import auth from "../../firebase.init";
-import {  useState } from "react";
-
+import { useState } from "react";
+import { FaRegEye } from "react-icons/fa";
+import { FaRegEyeSlash } from "react-icons/fa";
 export default function Register() {
-    const [success, setSuccess] = useState(false)
-    const [errorM, setErrorM] = useState('');
-    
-    const handleRegister=(e)=>{
-        e.preventDefault();
-        const email = e.target.email.value;
-        const password = e.target.password.value;
-        // console.log(`${email} || ${password}`);
-        setErrorM('');
-        setSuccess(false)
+  const [success, setSuccess] = useState(false);
+  const [errorM, setErrorM] = useState("");
+  const [showPass, setShowPass] = useState(false);
+  
 
-        if(password.length < 6){
-            setErrorM('password should be 6 character');
-            return;
-        }
+  const handleRegister = (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    const terms = e.target.terms.checked;
+    console.log(terms)
+    // console.log(`${email} || ${password}`);
+    setErrorM("");
+    setSuccess(false);
 
-        const passRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-        if(!passRegex.test(password)){
-            setErrorM('At least one uppercase, one lowercase, one number, one special character');
-            return;
-        }
-
-        createUserWithEmailAndPassword(auth, email, password)
-        .then(result =>{
-            const user = result.user;
-            console.log(user)
-            setSuccess(true);
-        }).catch(error => {
-            console.log("ERROR",error.message);
-            setErrorM(error.message);
-            setSuccess(false);
-        })
+    if (password.length < 6) {
+      setErrorM("password should be 6 character");
+      return;
     }
+
+    const passRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
+     
+
+    if (!passRegex.test(password)) {
+      setErrorM(
+        "At least one uppercase, one lowercase, one number, one special character"
+      );
+      return;
+    }
+
+    if(!terms){
+        setErrorM('Pleace accept our terms and conditions')
+        return;
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        setSuccess(true);
+      })
+      .catch((error) => {
+        console.log("ERROR", error.message);
+        setErrorM(error.message);
+        setSuccess(false);
+      });
+  };
   return (
     <div className="space-y-6">
-        <h1 className="text-center text-5xl font-bold">Register now!</h1>
+      <h1 className="text-center text-5xl font-bold">Register now!</h1>
       <div
         className="card bg-base-100 w-full max-w-sm 
           shrink-0 shadow-2xl mx-auto"
@@ -57,17 +71,37 @@ export default function Register() {
               required
             />
           </div>
-          <div className="form-control">
+          <div className="form-control relative">
             <label className="label">
               <span className="label-text">Password</span>
             </label>
+
             <input
-              type="password"
+              type={showPass ? "text" : "password"}
               name="password"
               placeholder="password"
               className="input input-bordered"
               required
             />
+            <button
+              onClick={() => setShowPass(!showPass)}
+              className="text-xl absolute right-3 top-12"
+            >
+              {showPass ? (
+                <FaRegEyeSlash></FaRegEyeSlash>
+              ) : (
+                <FaRegEye></FaRegEye>
+              )}
+            </button>
+
+            <div className="form-control my-2">
+              <label className="cursor-pointer flex justify-start items-center gap-4">
+                <input type="checkbox" name="terms" className="checkbox checkbox-success" />
+                <span className="label-text">
+                  Accept our terms and conditions
+                </span>
+              </label>
+            </div>
             <label className="label">
               <a href="#" className="label-text-alt link link-hover">
                 Forgot password?
@@ -78,11 +112,8 @@ export default function Register() {
             <button className="btn btn-primary">Login</button>
           </div>
         </form>
-        {
-            errorM && <p className="text-red-600">{errorM}</p>
-        }{
-            success && <p className="text-green-600">Successfuly create a user</p>
-        }
+        {errorM && <p className="text-red-600">{errorM}</p>}
+        {success && <p className="text-green-600">Successfuly create a user</p>}
       </div>
     </div>
   );
