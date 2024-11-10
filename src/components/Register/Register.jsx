@@ -1,8 +1,9 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import auth from "../../firebase.init";
 import { useState } from "react";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
+import { Link } from "react-router-dom";
 export default function Register() {
   const [success, setSuccess] = useState(false);
   const [errorM, setErrorM] = useState("");
@@ -14,7 +15,6 @@ export default function Register() {
     const email = e.target.email.value;
     const password = e.target.password.value;
     const terms = e.target.terms.checked;
-    console.log(terms)
     // console.log(`${email} || ${password}`);
     setErrorM("");
     setSuccess(false);
@@ -44,6 +44,11 @@ export default function Register() {
         const user = result.user;
         console.log(user);
         setSuccess(true);
+
+        sendEmailVerification(auth.currentUser)
+        .then(()=>{
+            console.log('varification mail send')
+        })
       })
       .catch((error) => {
         console.log("ERROR", error.message);
@@ -114,6 +119,7 @@ export default function Register() {
         </form>
         {errorM && <p className="text-red-600">{errorM}</p>}
         {success && <p className="text-green-600">Successfuly create a user</p>}
+        <p>Allready have an account please: <Link to='/login' className="font-bold">login</Link></p>
       </div>
     </div>
   );
