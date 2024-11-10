@@ -19,9 +19,17 @@ export default function Register() {
             return;
         }
 
+        const passRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        if(!passRegex.test(password)){
+            setErrorM('At least one uppercase, one lowercase, one number, one special character');
+            return;
+        }
+
         createUserWithEmailAndPassword(auth, email, password)
         .then(result =>{
             const user = result.user;
+            console.log(user)
             setSuccess(true);
         }).catch(error => {
             console.log("ERROR",error.message);
